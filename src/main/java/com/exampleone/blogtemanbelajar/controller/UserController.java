@@ -27,14 +27,12 @@ public class UserController {
     public ResponseEntity<ResponseBaseDTO> listUser(){ 
         ResponseBaseDTO response = new ResponseBaseDTO(); 
         try
-        {
-         
+        {         
          List<User> userList = userService.findAll();
          response.setStatus(true);
          response.setCode("200");
          response.setMessage("success");
-         response.setData(userList);
-         
+         response.setData(userList);         
          
          return new ResponseEntity<>(response ,HttpStatus.OK);
         }
@@ -73,8 +71,7 @@ public class UserController {
             response.setStatus(true);
             response.setCode("200");
             response.setMessage("success");
-            response.setData(result);
-            
+            response.setData(result);           
             
             return new ResponseEntity<>(response ,HttpStatus.OK);
         }
@@ -90,29 +87,90 @@ public class UserController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable(value = "id") Long id){
-        userService.delete(id);
-        return "success";
+    public  ResponseEntity<ResponseBaseDTO> delete(@PathVariable(value = "id") Long id){       
+       
+        ResponseBaseDTO response = new ResponseBaseDTO(); 
+
+        try
+        {         
+            userService.delete(id);
+            response.setStatus(true);
+            response.setCode("200");
+            response.setMessage("success");           
+            
+            return new ResponseEntity<>(response ,HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+         // catch error when get user
+            response.setStatus(false);
+            response.setCode("500");
+            response.setMessage( "id " + id + " not exists! " );
+            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+        }
+      
     }
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
+    public ResponseEntity<ResponseBaseDTO> updateUser(@PathVariable("id") long id, @RequestBody User user) {
      
-        Optional<User> userData = userService.findById(id);
        
-		if (userData.isPresent()) {
-			User _user = userData.get();
-            _user.setFirstname(user.getFirstname());
-            _user.setLastname(user.getLastname());
-            _user.setEmail(user.getEmail());
-            // _user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            _user.setNohp(user.getNohp());
-		
-			return new ResponseEntity<>(userService.save(_user), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ResponseBaseDTO response = new ResponseBaseDTO();
+        try {
+            Optional<User> userData = userService.findById(id);
+            if (userData.isPresent()) {
+                User _user = userData.get();
+                _user.setFirstname(user.getFirstname());
+                _user.setLastname(user.getLastname());
+                _user.setEmail(user.getEmail());
+                _user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+                _user.setNohp(user.getNohp());
+
+                // userData = userService.save(_user)
+                response.setStatus(true);
+                response.setCode("200");
+                response.setMessage("success");  
+                response.setData(userService.save(_user));            
+                
+            }
+            return new ResponseEntity<>( response, HttpStatus.OK);
+          
+        } catch (Exception e) {
+            // catch error when get user
+            response.setStatus(false);
+            response.setCode("500");
+            response.setMessage( "id " + id + " not exists! " );
+            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
         }
        
+    }
+
+
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	public ResponseEntity<ResponseBaseDTO> getTutorialById(@PathVariable("id") long id) {
+
+        ResponseBaseDTO response = new ResponseBaseDTO(); 
+
+        try
+        {     
+            Optional<User> userList = userService.findById(id); 
+            if (userList.isPresent()) {           
+                response.setStatus(true);
+                response.setCode("200");
+                response.setMessage("success");
+                response.setData(userList);     
+                
+            }
+            return new ResponseEntity<>( response, HttpStatus.OK);
+        }
+        catch(Exception e)
+        {
+            // catch error when get user
+            response.setStatus(false);
+            response.setCode("500");
+            response.setMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
 }

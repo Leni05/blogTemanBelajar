@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 
 @Entity
@@ -79,7 +78,7 @@ public class User{
         this.nohp = nohp;
     }
     
-@Override
+    @Override
 	public String toString() {
 		return "User [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email + ", nohp="+ nohp + "]";
 	}

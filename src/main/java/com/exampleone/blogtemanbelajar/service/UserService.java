@@ -7,6 +7,6 @@ import java.util.Optional;
 public interface UserService{
   List<User> findAll();
   User save(User user);
-  void delete(Long id);
+  void delete(long id);
   Optional<User> findById(Long id);
 }
